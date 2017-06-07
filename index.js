@@ -1,4 +1,3 @@
-const Promise = require('bluebird');
 const { send } = require('micro');
 const Tuc = require('tuc');
 

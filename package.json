@@ -32,7 +32,6 @@
     "extends": "prettier"
   },
   "dependencies": {
-    "bluebird": "^3.5.0",
     "micro": "^7.3.3",
     "tuc": "^0.1.4"
   },
