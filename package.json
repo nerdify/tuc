@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "name": "tuc-service",
   "description": "Microservice to check the balance of TUC cards",
   "main": "index.js",
