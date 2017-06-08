@@ -26,14 +26,16 @@
     "alias": [
       "balance.saldotuc.com",
       "mpeso.saldotuc.com"
-    ]
+    ],
+    "dotenv": true
   },
   "xo": {
     "extends": "prettier"
   },
   "dependencies": {
     "micro": "^7.3.3",
-    "tuc": "^0.1.4"
+    "r-cache": "^0.1.1",
+    "tuc-promise": "^0.1.1"
   },
   "devDependencies": {
     "eslint-config-prettier": "^2.1.1",
