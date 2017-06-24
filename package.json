@@ -22,24 +22,13 @@
     "url": "https://github.com/nerdify/tuc/issues"
   },
   "homepage": "https://github.com/nerdify/tuc#readme",
-  "now": {
-    "alias": [
-      "balance.saldotuc.com",
-      "mpeso.saldotuc.com"
-    ],
-    "dotenv": true
-  },
-  "xo": {
-    "extends": "prettier"
-  },
   "dependencies": {
+    "dotenv": "4.0.0",
     "micro": "^7.3.3",
     "r-cache": "^0.1.1",
     "tuc-promise": "^0.1.1"
   },
   "devDependencies": {
-    "eslint-config-prettier": "^2.1.1",
-    "prettier": "^1.4.4",
     "xo": "^0.18.2"
   }
 }
