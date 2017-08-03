@@ -5,6 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
+    "dev": "micro-dev",
     "start": "micro"
   },
   "repository": {
@@ -23,12 +24,13 @@
   },
   "homepage": "https://github.com/nerdify/tuc#readme",
   "dependencies": {
-    "micro": "^7.3.3",
-    "r-cache": "^0.1.1",
-    "tuc-promise": "^0.1.1"
+    "micro": "8.0.1",
+    "r-cache": "0.1.1",
+    "tuc-promise": "0.1.1"
   },
   "devDependencies": {
     "dotenv": "4.0.0",
-    "xo": "^0.18.2"
+    "micro-dev": "1.1.0",
+    "xo": "0.18.2"
   }
 }
