@@ -24,13 +24,13 @@
   },
   "homepage": "https://github.com/nerdify/tuc#readme",
   "dependencies": {
-    "micro": "8.0.1",
-    "r-cache": "0.1.1",
-    "tuc-promise": "0.1.1"
+    "micro": "9.0.2",
+    "r-cache": "0.2.0",
+    "tuc-promise": "0.3.0"
   },
   "devDependencies": {
     "dotenv": "4.0.0",
-    "micro-dev": "1.1.0",
+    "micro-dev": "1.4.0",
     "xo": "0.18.2"
   }
 }
