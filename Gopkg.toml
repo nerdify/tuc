@@ -36,3 +36,15 @@
 [[constraint]]
   name = "github.com/tj/go"
   version = "1.6.0"
+
+[[constraint]]
+  name = "github.com/go-redis/cache"
+  version = "6.3.2"
+
+[[constraint]]
+  name = "github.com/go-redis/redis"
+  version = "6.7.4"
+
+[[constraint]]
+  name = "github.com/vmihailenco/msgpack"
+  version = "3.2.2"

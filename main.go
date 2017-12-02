@@ -10,11 +10,13 @@ import (
 	"github.com/tj/go/env"
 	"github.com/tj/go/http/response"
 
+	"github.com/hosmelq/tuc-balance/internal/cache"
 	"github.com/hosmelq/tuc-balance/internal/client"
 )
 
 var c = client.Client{
 	Endpoint: env.Get("ENDPOINT"),
+	Token:    env.Get("TOKEN"),
 }
 
 func init() {
@@ -35,6 +37,16 @@ func main() {
 
 func getCardBalance(w http.ResponseWriter, r *http.Request) {
 	card := r.URL.Query().Get(":card")
+	cacheKey := "tuc:" + card
+
+	obj := make(map[string]interface{})
+
+	if err := cache.Get(cacheKey, &obj); err == nil {
+		response.OK(w, obj)
+
+		return
+	}
+
 	out, err := c.GetBalance(&client.RequestInput{
 		Card: card,
 	})
@@ -53,8 +65,10 @@ func getCardBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.OK(w, map[string]interface{}{
-		"balance": out.Balance,
-		"number":  card,
-	})
+	obj["balance"] = out.Balance
+	obj["number"] = card
+
+	cache.Set(cacheKey, obj)
+
+	response.OK(w, obj)
 }

@@ -6,12 +6,12 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
-	"github.com/tj/go/env"
 )
 
 // Client for request balance.
 type Client struct {
 	Endpoint string
+	Token    string
 }
 
 // RequestInput is the input for request balance.
@@ -40,7 +40,7 @@ func (c *Client) GetBalance(in *RequestInput) (*RequestOutput, error) {
 		return nil, errors.Wrap(err, "creating request")
 	}
 
-	req.Header.Set("Authorization", "Bearer "+env.Get("TOKEN"))
+	req.Header.Set("Authorization", "Bearer "+c.Token)
 	req.Header.Set("Content-Type", "application/json")
 
 	res, err := http.DefaultClient.Do(req)
