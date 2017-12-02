@@ -1,0 +1,47 @@
+{
+  "name": "balance-saldotuc-com",
+  "profile": "saldotuc",
+  "dns": {
+    "saldotuc.com": [
+      {
+        "name": "saldotuc.com",
+        "type": "MX",
+        "value": [
+          "1 ASPMX.L.GOOGLE.COM",
+          "5 ALT1.ASPMX.L.GOOGLE.COM",
+          "5 ALT2.ASPMX.L.GOOGLE.COM",
+          "10 ALT3.ASPMX.L.GOOGLE.COM",
+          "10 ALT4.ASPMX.L.GOOGLE.COM"
+        ]
+      },
+      {
+        "name": "scph0617._domainkey.saldotuc.com",
+        "type": "TXT",
+        "value": [
+          "\"v=DKIM1; k=rsa; h=sha256; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC6SJ3Iyf7u0M9TVduJuKRhhixGgE999a03UuR9dF+OG2SMakoas4IcgVgd7Mi29V8w3i1hIRGqUId0JSmre7b7AQOYS3/Ywwo8f9WEStEz+IJUkg/g9I1joVVLE+SpJ5yAMz14QfxMupojo7EupQ5WLLJ7OjWxn38KT7wpuiM/gQIDAQAB\""
+        ]
+      }
+    ]
+  },
+  "environment": {
+    "NODE_ENV": "production"
+  },
+  "hooks": {
+    "build": [
+      "make",
+      "browserify --node index.js > server.js"
+    ],
+    "clean": "rm server.js"
+  },
+  "lambda": {
+    "memory": 128
+  },
+  "proxy": {
+    "command": "./node-v8.9.1-linux-x64/bin/node server.js"
+  },
+  "stages": {
+    "production": {
+      "domain": "balance.saldotuc.com"
+    }
+  }
+}

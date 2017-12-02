@@ -2,18 +2,21 @@ if (process.env.NODE_ENV !== 'production') {
 	require('dotenv').config();
 }
 
-const {send} = require('micro');
+const micro = require('micro');
 const {cache, createClient} = require('r-cache');
 const {getBalance} = require('tuc-promise');
 
+const {createError, send} = micro;
 const client = createClient(
 	// eslint-disable-next-line camelcase
 	process.env.REDIS_PORT, process.env.REDIS_HOST, {no_ready_check: true}
 );
 
-client.auth(process.env.REDIS_PASSWORD);
+if (process.env.REDIS_PASSWORD) {
+	client.auth(process.env.REDIS_PASSWORD);
+}
 
-module.exports = async (req, res) => {
+const server = micro(async (req, res) => {
 	const number = req.url.replace(/.*(\d{8}).*/, '$1');
 	const cacheKey = `tuc:${number}`;
 
@@ -25,12 +28,14 @@ module.exports = async (req, res) => {
 			balance: parseFloat(response)
 		});
 	} catch (err) {
-		const {code} = err;
+		const {code = 503, message = ''} = err;
 
-		if (code === 100 || code === 104) {
+		if (code === 100) {
 			return send(res, 404);
 		}
 
-		send(res, 503);
+		throw createError(code, message, err);
 	}
-};
+});
+
+server.listen(process.env.PORT || 4000);
