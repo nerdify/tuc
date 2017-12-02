@@ -33,7 +33,6 @@ func Get(key string, object interface{}) error {
 }
 
 // Set caches the item.
-// func Set(item *cache.Item) error {
 func Set(key string, object interface{}) error {
 	return codec.Set(&cache.Item{
 		Expiration: time.Minute * 5,
