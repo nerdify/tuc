@@ -1,6 +1,4 @@
-_**TUC Service —** Microservice to check the balance of TUC cards_
-
-[![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
+_**TUC Service —** Check the balance of TUC cards_
 
 ## Usage
 
