@@ -1,6 +1,35 @@
 {
-  "name": "balance-saldotuc-com",
+  "description": "Check the balance of TUC cards",
+  "name": "saldotuc-balance-api",
   "profile": "saldotuc",
+  "actions": [
+    {
+      "name": "email.backend",
+      "type": "email",
+      "emails": ["hosmel@saldotuc.com"]
+    }
+  ],
+  "alerts": [
+    {
+      "action": "email.backend",
+      "metric": "http.5xx",
+      "statistic": "sum",
+      "threshold": 5
+    },
+    {
+      "action": "email.backend",
+      "metric": "http.count",
+      "statistic": "sum",
+      "threshold": 100
+    },
+    {
+      "action": "email.backend",
+      "metric": "http.latency",
+      "period": "5m",
+      "statistic": "avg",
+      "threshold": 1000
+    }
+  ],
   "dns": {
     "saldotuc.com": [
       {
@@ -23,21 +52,8 @@
       }
     ]
   },
-  "environment": {
-    "NODE_ENV": "production"
-  },
-  "hooks": {
-    "build": [
-      "make",
-      "browserify --node index.js > server.js"
-    ],
-    "clean": "rm server.js"
-  },
   "lambda": {
     "memory": 128
-  },
-  "proxy": {
-    "command": "./node-v8.9.1-linux-x64/bin/node server.js"
   },
   "stages": {
     "production": {
