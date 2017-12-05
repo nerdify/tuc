@@ -10,8 +10,8 @@ import (
 	"github.com/tj/go/env"
 	"github.com/tj/go/http/response"
 
-	"github.com/hosmelq/tuc-balance/internal/cache"
-	"github.com/hosmelq/tuc-balance/internal/client"
+	"github.com/nerdify/tuc/internal/cache"
+	"github.com/nerdify/tuc/internal/client"
 )
 
 var c = client.Client{
