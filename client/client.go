@@ -26,6 +26,14 @@ type RequestOutput struct {
 	StatusCode int     `json:"status_code"`
 }
 
+// NewClient create a new client.
+func NewClient(url, token string) *Client {
+	return &Client{
+		Endpoint: url,
+		Token:    token,
+	}
+}
+
 // GetBalance get the balance for the given card.
 func (c *Client) GetBalance(in *RequestInput) (*RequestOutput, error) {
 	b, err := json.Marshal(in)
@@ -34,7 +42,7 @@ func (c *Client) GetBalance(in *RequestInput) (*RequestOutput, error) {
 		return nil, errors.Wrap(err, "marshaling input")
 	}
 
-	req, err := http.NewRequest("POST", c.Endpoint, bytes.NewReader(b))
+	req, err := http.NewRequest(http.MethodPost, c.Endpoint, bytes.NewReader(b))
 
 	if err != nil {
 		return nil, errors.Wrap(err, "creating request")

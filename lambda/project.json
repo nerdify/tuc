@@ -1,0 +1,9 @@
+{
+  "description": "",
+  "environment": {},
+  "memory": 128,
+  "name": "tuc",
+  "profile": "saldotuc",
+  "role": "arn:aws:iam::993665491949:role/tuc_lambda_function",
+  "timeout": 5
+}

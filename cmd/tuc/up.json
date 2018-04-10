@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json.schemastore.org/up.json",
+  "description": "",
+  "name": "tuc",
+  "profile": "saldotuc",
+  "actions": [
+    {
+      "name": "email.backend",
+      "type": "email",
+      "emails": ["hosmel@saldotuc.com"]
+    }
+  ],
+  "alerts": [],
+  "dns": {
+    "saldotuc.com": [
+      {
+        "name": "saldotuc.com",
+        "type": "MX",
+        "value": [
+          "1 ASPMX.L.GOOGLE.COM",
+          "5 ALT1.ASPMX.L.GOOGLE.COM",
+          "5 ALT2.ASPMX.L.GOOGLE.COM",
+          "10 ALT3.ASPMX.L.GOOGLE.COM",
+          "10 ALT4.ASPMX.L.GOOGLE.COM"
+        ]
+      },
+      {
+        "name": "_amazonses.saldotuc.com",
+        "type": "TXT",
+        "value": [
+          "\"ggUb4fuPfbW6Y0gx03sal2LUrBbiT53oZ9rvqG8PP1w=\""
+        ]
+      },
+      {
+        "name": "ibwpp36qutse2ajtof5bxmibyhmpdxov._domainkey.saldotuc.com",
+        "type": "CNAME",
+        "value": [
+          "ibwpp36qutse2ajtof5bxmibyhmpdxov.dkim.amazonses.com"
+        ]
+      },
+      {
+        "name": "bxlckd53jjewgnrlfsjspwzeikjir2j4._domainkey.saldotuc.com",
+        "type": "CNAME",
+        "value": [
+          "bxlckd53jjewgnrlfsjspwzeikjir2j4.dkim.amazonses.com"
+        ]
+      },
+      {
+        "name": "d5drjgoj36k52gpfpryasi7dphwsepb2._domainkey.saldotuc.com",
+        "type": "CNAME",
+        "value": [
+          "d5drjgoj36k52gpfpryasi7dphwsepb2.dkim.amazonses.com"
+        ]
+      }
+    ]
+  },
+  "error_pages": {
+    "variables": {
+      "color": "#05243e"
+    }
+  },
+  "hooks": {
+    "prebuild": "packr -i ../..",
+    "postbuild": "cd ../.. && packr clean"
+  },
+  "lambda": {
+    "memory": 128
+  },
+  "regions": [
+    "us-east-1"
+  ],
+  "stages": {
+    "production": {
+      "domain": "saldotuc.com"
+    }
+  }
+}

@@ -1,3 +1,5 @@
 .envrc
-dist
-vendor/
+.vscode
+.DS_Store
+tmp
+vendor
