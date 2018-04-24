@@ -5,11 +5,13 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/apex/log"
 	jwtmiddleware "github.com/auth0/go-jwt-middleware"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
+	gocache "github.com/patrickmn/go-cache"
 	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
 	"github.com/tj/go/env"
@@ -20,6 +22,7 @@ import (
 )
 
 var c = client.NewClient(env.Get("ENDPOINT"), env.Get("TOKEN"))
+var cache = gocache.New(5*time.Minute, 10*time.Minute)
 var jwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
 	ErrorHandler: func(w http.ResponseWriter, r *http.Request, err string) {
 		log.Error(err)
@@ -143,6 +146,7 @@ func (h *CardHandler) handleGetCardBalance(w http.ResponseWriter, r *http.Reques
 	vars := mux.Vars(r)
 	cardID := vars["card"]
 	userID := getUserID(r)
+	cacheKey := "tuc:" + cardID
 
 	l := log.WithField("card", cardID)
 
@@ -157,6 +161,14 @@ func (h *CardHandler) handleGetCardBalance(w http.ResponseWriter, r *http.Reques
 	if card == nil {
 		l.Warn("card does not exist")
 		response.NotFound(w)
+		return
+	}
+
+	// get from cache
+	if balance, found := cache.Get(cacheKey); found {
+		response.OK(w, map[string]interface{}{
+			"balance": balance,
+		})
 		return
 	}
 
@@ -187,6 +199,9 @@ func (h *CardHandler) handleGetCardBalance(w http.ResponseWriter, r *http.Reques
 		response.InternalServerError(w)
 		return
 	}
+
+	// set to cache
+	cache.SetDefault(cacheKey, out.Balance)
 
 	response.OK(w, map[string]interface{}{
 		"balance": out.Balance,
