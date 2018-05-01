@@ -27,30 +27,22 @@
       {
         "name": "_amazonses.saldotuc.com",
         "type": "TXT",
-        "value": [
-          "\"ggUb4fuPfbW6Y0gx03sal2LUrBbiT53oZ9rvqG8PP1w=\""
-        ]
+        "value": ["\"ggUb4fuPfbW6Y0gx03sal2LUrBbiT53oZ9rvqG8PP1w=\""]
       },
       {
         "name": "ibwpp36qutse2ajtof5bxmibyhmpdxov._domainkey.saldotuc.com",
         "type": "CNAME",
-        "value": [
-          "ibwpp36qutse2ajtof5bxmibyhmpdxov.dkim.amazonses.com"
-        ]
+        "value": ["ibwpp36qutse2ajtof5bxmibyhmpdxov.dkim.amazonses.com"]
       },
       {
         "name": "bxlckd53jjewgnrlfsjspwzeikjir2j4._domainkey.saldotuc.com",
         "type": "CNAME",
-        "value": [
-          "bxlckd53jjewgnrlfsjspwzeikjir2j4.dkim.amazonses.com"
-        ]
+        "value": ["bxlckd53jjewgnrlfsjspwzeikjir2j4.dkim.amazonses.com"]
       },
       {
         "name": "d5drjgoj36k52gpfpryasi7dphwsepb2._domainkey.saldotuc.com",
         "type": "CNAME",
-        "value": [
-          "d5drjgoj36k52gpfpryasi7dphwsepb2.dkim.amazonses.com"
-        ]
+        "value": ["d5drjgoj36k52gpfpryasi7dphwsepb2.dkim.amazonses.com"]
       }
     ]
   },
@@ -66,12 +58,13 @@
   "lambda": {
     "memory": 128
   },
-  "regions": [
-    "us-east-1"
-  ],
+  "regions": ["us-east-1"],
   "stages": {
     "production": {
       "domain": "saldotuc.com"
+    },
+    "staging": {
+      "domain": "stage.saldotuc.com"
     }
   }
 }
