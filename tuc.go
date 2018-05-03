@@ -36,11 +36,14 @@ type LoginRequestService interface {
 
 // User is an individual's account on Saldo TUC.
 type User struct {
-	ID string `json:"id"`
+	FacebookID string `json:"-" dynamodbav:"facebook_id,omitempty"`
+	GoogleID   string `json:"-" dynamodbav:"google_id,omitempty"`
+	ID         string `json:"id"`
 }
 
 // UserService represents a service for managing users.
 type UserService interface {
 	Find(email string) (*User, error)
 	Create(user *User) error
+	Update(user *User) error
 }

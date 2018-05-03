@@ -112,7 +112,7 @@ func (s *CardService) Update(userID, cardID string, balance float64) (*tuc.Card,
 		},
 		ReturnValues:     dynamodb.ReturnValueAllNew,
 		TableName:        &cardsTable,
-		UpdateExpression: aws.String("set balance = :b"),
+		UpdateExpression: aws.String("SET balance = :b"),
 	}
 
 	req := svc.UpdateItemRequest(input)

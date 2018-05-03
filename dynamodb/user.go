@@ -1,6 +1,7 @@
 package dynamodb
 
 import (
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/dynamodbattribute"
 	"github.com/pkg/errors"
@@ -55,6 +56,29 @@ func (s *UserService) Create(user *tuc.User) error {
 	}
 
 	req := svc.PutItemRequest(input)
+	_, err := req.Send()
+
+	return err
+}
+
+// Update an user.
+func (s *UserService) Update(user *tuc.User) error {
+	input := &dynamodb.UpdateItemInput{
+		ExpressionAttributeValues: map[string]dynamodb.AttributeValue{
+			":fi": {
+				S: &user.FacebookID,
+			},
+		},
+		Key: map[string]dynamodb.AttributeValue{
+			"id": {
+				S: &user.ID,
+			},
+		},
+		TableName:        &usersTable,
+		UpdateExpression: aws.String("SET facebook_id = :fi"),
+	}
+
+	req := svc.UpdateItemRequest(input)
 	_, err := req.Send()
 
 	return err
