@@ -32,94 +32,11 @@ func NewAuthHandler(r *mux.Router) *AuthHandler {
 	h := &AuthHandler{}
 
 	r.HandleFunc("/login", h.handleLogin).Methods(http.MethodPost)
-	r.HandleFunc("/login/facebook", h.handleSocialLogin).Methods(http.MethodPost)
+	r.HandleFunc("/login/facebook", h.handleFacebookLogin).Methods(http.MethodPost)
 	r.HandleFunc("/authenticate", h.handleAuthenticate).Methods(http.MethodGet)
 	r.HandleFunc("/access_token", h.handleAccessToken).Methods(http.MethodPost)
 
 	return h
-}
-
-func (h *AuthHandler) handleSocialLogin(w http.ResponseWriter, r *http.Request) {
-	var body struct {
-		AccessToken string `json:"access_token"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		log.WithError(err).Error("parsing body")
-		response.BadRequest(w)
-		return
-	}
-
-	res, err := http.Get("https://graph.facebook.com/me?fields=email,id&access_token=" + body.AccessToken)
-	if err != nil {
-		log.WithError(err).Error("requesting facebook permissions")
-		response.InternalServerError(w)
-		return
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode != 200 {
-		log.Error("invalid access token")
-		response.BadRequest(w)
-		return
-	}
-
-	var fbr struct {
-		ID    string `json:"id"`
-		Email string `json:"email"`
-	}
-
-	if err := json.NewDecoder(res.Body).Decode(&fbr); err != nil {
-		log.WithError(err).Error("parsing facebook response")
-		response.InternalServerError(w)
-		return
-	}
-
-	if fbr.Email == "" {
-		response.Unauthorized(w)
-		return
-	}
-
-	u, err := h.UserService.Find(fbr.Email)
-	if err != nil {
-		log.WithError(err).Error("loading user")
-		response.InternalServerError(w)
-		return
-	}
-
-	if u == nil {
-		u = &tuc.User{
-			FacebookID: fbr.ID,
-			ID:         fbr.Email,
-		}
-
-		if err := h.UserService.Create(u); err != nil {
-			log.WithError(err).Error("creating user")
-			response.InternalServerError(w)
-			return
-		}
-	} else if u.FacebookID == "" {
-		u.FacebookID = fbr.ID
-
-		if err := h.UserService.Update(u); err != nil {
-			log.WithError(err).Error("updating item")
-			response.InternalServerError(w)
-			return
-		}
-	}
-
-	token, err := generateAccessToken(fbr.Email)
-
-	if err != nil {
-		log.WithError(err).Error("signed token")
-		response.InternalServerError(w)
-		return
-	}
-
-	response.OK(w, map[string]string{
-		"email": u.ID,
-		"token": token,
-	})
 }
 
 func (h *AuthHandler) handleLogin(w http.ResponseWriter, r *http.Request) {
@@ -174,6 +91,89 @@ func (h *AuthHandler) handleLogin(w http.ResponseWriter, r *http.Request) {
 
 	response.OK(w, map[string]string{
 		"code": v.RequestToken,
+	})
+}
+
+func (h *AuthHandler) handleFacebookLogin(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		AccessToken string `json:"access_token"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		log.WithError(err).Error("parsing body")
+		response.BadRequest(w)
+		return
+	}
+
+	res, err := http.Get("https://graph.facebook.com/me?fields=email,id&access_token=" + body.AccessToken)
+	if err != nil {
+		log.WithError(err).Error("requesting facebook permissions")
+		response.InternalServerError(w)
+		return
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		log.Error("invalid access token")
+		response.BadRequest(w)
+		return
+	}
+
+	var fbr struct {
+		Email string `json:"email"`
+		ID    string `json:"id"`
+	}
+
+	if err := json.NewDecoder(res.Body).Decode(&fbr); err != nil {
+		log.WithError(err).Error("parsing facebook response")
+		response.InternalServerError(w)
+		return
+	}
+
+	if fbr.Email == "" {
+		response.Unauthorized(w)
+		return
+	}
+
+	u, err := h.UserService.Find(fbr.Email)
+	if err != nil {
+		log.WithError(err).Error("loading user")
+		response.InternalServerError(w)
+		return
+	}
+
+	if u == nil {
+		u = &tuc.User{
+			FacebookID: fbr.ID,
+			ID:         fbr.Email,
+		}
+
+		if err := h.UserService.Create(u); err != nil {
+			log.WithError(err).Error("creating user")
+			response.InternalServerError(w)
+			return
+		}
+	} else if u.FacebookID == "" {
+		u.FacebookID = fbr.ID
+
+		if err := h.UserService.Update(u); err != nil {
+			log.WithError(err).Error("updating item")
+			response.InternalServerError(w)
+			return
+		}
+	}
+
+	token, err := generateAccessToken(fbr.Email)
+
+	if err != nil {
+		log.WithError(err).Error("signed token")
+		response.InternalServerError(w)
+		return
+	}
+
+	response.OK(w, map[string]string{
+		"email": u.ID,
+		"token": token,
 	})
 }
 
