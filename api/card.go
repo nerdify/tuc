@@ -146,7 +146,6 @@ func (h *CardHandler) handleGetCardBalance(w http.ResponseWriter, r *http.Reques
 	vars := mux.Vars(r)
 	cardID := vars["card"]
 	userID := getUserID(r)
-	cacheKey := "tuc:" + cardID
 
 	l := log.WithField("card", cardID)
 
@@ -163,6 +162,8 @@ func (h *CardHandler) handleGetCardBalance(w http.ResponseWriter, r *http.Reques
 		response.NotFound(w)
 		return
 	}
+
+	cacheKey := "tuc:" + card.Number
 
 	// get from cache
 	if balance, found := cache.Get(cacheKey); found {
