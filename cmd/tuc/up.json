@@ -56,7 +56,20 @@
     "postbuild": "cd ../.. && packr clean"
   },
   "lambda": {
-    "memory": 128
+    "memory": 128,
+    "policy": [
+      {
+        "Effect": "Allow",
+        "Resource": "*",
+        "Action": [
+          "dynamodb:DeleteItem",
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:Query",
+          "dynamodb:UpdateItem"
+        ]
+      }
+    ]
   },
   "regions": ["us-east-1"],
   "stages": {
