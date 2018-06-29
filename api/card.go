@@ -21,7 +21,7 @@ import (
 	"github.com/nerdify/tuc/client"
 )
 
-var c = client.NewClient(env.Get("ENDPOINT"), env.Get("TOKEN"))
+var c = client.NewClient(env.Get("ENDPOINT"))
 var cache = gocache.New(5*time.Minute, 10*time.Minute)
 var jwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
 	ErrorHandler: func(w http.ResponseWriter, r *http.Request, err string) {
@@ -100,20 +100,22 @@ func (h *CardHandler) handlePostCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if out.StatusCode >= 400 {
-		if strings.ToLower(out.Message) == "inactivo" {
-			l.Warn("inactive card")
-			response.BadRequest(w)
-		} else {
-			l.Warn("card does not exist")
-			response.NotFound(w)
-		}
+	if out.Code == 2 {
+		l.Warn("card does not exist")
+		response.NotFound(w)
+		return
+	}
 
+	data := out.Data[0]
+
+	if strings.ToLower(data.Status) == "bloqueado" {
+		l.Warn("inactive card")
+		response.BadRequest(w)
 		return
 	}
 
 	card := &tuc.Card{
-		Balance: out.Balance,
+		Balance: data.Balance,
 		ID:      uuid.NewV4().String(),
 		Name:    body.Name,
 		Number:  body.Number,
@@ -183,29 +185,33 @@ func (h *CardHandler) handleGetCardBalance(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if out.StatusCode >= 400 {
-		if strings.ToLower(out.Message) == "inactivo" {
-			l.Warn("inactive card")
-			response.BadRequest(w)
-		} else {
-			l.Warn("card does not exist")
-			response.NotFound(w)
-		}
-
+	if out.Code == 2 {
+		l.Warn("card does not exist")
+		response.NotFound(w)
 		return
 	}
 
-	if _, err := h.CardService.Update(userID, cardID, out.Balance); err != nil {
+	data := out.Data[0]
+
+	if strings.ToLower(data.Status) == "bloqueado" {
+		l.Warn("inactive card")
+		response.BadRequest(w)
+		return
+	}
+
+	balance := data.Balance
+
+	if _, err := h.CardService.Update(userID, cardID, balance); err != nil {
 		l.WithError(err).Error("updating card")
 		response.InternalServerError(w)
 		return
 	}
 
 	// set to cache
-	cache.SetDefault(cacheKey, out.Balance)
+	cache.SetDefault(cacheKey, balance)
 
 	response.OK(w, map[string]interface{}{
-		"balance": out.Balance,
+		"balance": balance,
 	})
 }
 

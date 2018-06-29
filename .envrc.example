@@ -6,4 +6,3 @@ export PORT=5000
 export JWT_KEY=
 
 export ENDPOINT=
-export TOKEN=

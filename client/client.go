@@ -1,8 +1,8 @@
 package client
 
 import (
-	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/pkg/errors"
@@ -21,37 +21,24 @@ type RequestInput struct {
 
 // RequestOutput is the output for request balance.
 type RequestOutput struct {
-	Balance    float64 `json:"balance,string"`
-	Message    string  `json:"message"`
-	StatusCode int     `json:"status_code"`
+	Code int `json:"code"`
+	Data []struct {
+		Balance float64 `json:"balance,string"`
+		Status  string  `json:"status"`
+	} `json:"data"`
 }
 
 // NewClient create a new client.
-func NewClient(url, token string) *Client {
+func NewClient(url string) *Client {
 	return &Client{
 		Endpoint: url,
-		Token:    token,
 	}
 }
 
 // GetBalance get the balance for the given card.
 func (c *Client) GetBalance(in *RequestInput) (*RequestOutput, error) {
-	b, err := json.Marshal(in)
-
-	if err != nil {
-		return nil, errors.Wrap(err, "marshaling input")
-	}
-
-	req, err := http.NewRequest(http.MethodPost, c.Endpoint, bytes.NewReader(b))
-
-	if err != nil {
-		return nil, errors.Wrap(err, "creating request")
-	}
-
-	req.Header.Set("Authorization", "Bearer "+c.Token)
-	req.Header.Set("Content-Type", "application/json")
-
-	res, err := http.DefaultClient.Do(req)
+	url := fmt.Sprintf("%s/%s", c.Endpoint, in.Card)
+	res, err := http.Get(url)
 
 	if err != nil {
 		return nil, errors.Wrap(err, "requesting")
